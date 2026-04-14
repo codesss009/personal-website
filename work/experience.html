@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - Sarath</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .experience-item {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .experience-item:last-child {
+            border-bottom: none;
+        }
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .exp-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .exp-date {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .exp-company {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .exp-description {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        .exp-highlights {
+            list-style: none;
+            padding-left: 0;
+        }
+        .exp-highlights li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        .exp-highlights li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+        .skills-section {
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 2px solid var(--border);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .skill-category h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+        }
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tag {
+            background: var(--bg-light);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../index.html#home">Home</a></li>
+            <li><a href="../blog/index.html">Blog</a></li>
+            <li><a href="../research/publications.html">Research</a></li>
+            <li><a href="experience.html">Experience</a></li>
+        </ul>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h2>Professional Experience</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <div class="exp-title">AI Platform Engineer</div>
+                        <div class="exp-date">2023 - 2024</div>
+                    </div>
+                    <div class="exp-company">Boston Scientific</div>
+                    <p class="exp-description">
+                        Built and maintained production ML infrastructure supporting data science teams 
+                        across the organization. Focused on Kubernetes-based platforms, MLOps tooling, 
+                        and GitOps workflows.
+                    </p>
+                    <ul class="exp-highlights">
+                        <li>Designed and deployed Kubernetes-native ML platform using MLflow, ArgoCD, and Argo Workflows</li>
+                        <li>Implemented GitOps practices for ML pipeline management, improving deployment reliability and auditability</li>
+                        <li>Architected model registry and artifact storage solutions handling 500+ experiments/month</li>
+                        <li>Automated infrastructure provisioning with Terraform, reducing setup time from days to hours</li>
+                        <li>Documented critical decisions using Architecture Decision Records (ADRs)</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <div class="exp-title">Graduate Research Assistant</div>
+                        <div class="exp-date">2024 - Present</div>
+                    </div>
+                    <div class="exp-company">UNC Charlotte</div>
+                    <p class="exp-description">
+                        Pursuing master's degree while exploring research in ML systems and GPU workload scheduling.
+                    </p>
+                    <ul class="exp-highlights">
+                        <li>Researching efficient scheduling strategies for multi-tenant GPU clusters</li>
+                        <li>Analyzing workload patterns from production ML systems</li>
+                        <li>Contributing to HPC and distributed systems projects</li>
+                    </ul>
+                </div>
+
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <div class="exp-title">Previous Role</div>
+                        <div class="exp-date">Year - Year</div>
+                    </div>
+                    <div class="exp-company">Company Name</div>
+                    <p class="exp-description">
+                        Brief description of role and responsibilities.
+                    </p>
+                    <ul class="exp-highlights">
+                        <li>Key achievement or responsibility</li>
+                        <li>Another important contribution</li>
+                    </ul>
+                </div>
+
+                <div class="skills-section">
+                    <h3 style="text-align: center; margin-bottom: 2rem;">Technical Skills</h3>
+                    
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h4>Infrastructure & Platforms</h4>
+                            <div class="skill-tags">
+                                <span class="tag">Kubernetes</span>
+                                <span class="tag">Docker</span>
+                                <span class="tag">Terraform</span>
+                                <span class="tag">Linux</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4>MLOps & Tools</h4>
+                            <div class="skill-tags">
+                                <span class="tag">MLflow</span>
+                                <span class="tag">ArgoCD</span>
+                                <span class="tag">Argo Workflows</span>
+                                <span class="tag">Git</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4>Programming</h4>
+                            <div class="skill-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Bash</span>
+                                <span class="tag">Go</span>
+                                <span class="tag">SQL</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4>Cloud & DevOps</h4>
+                            <div class="skill-tags">
+                                <span class="tag">AWS</span>
+                                <span class="tag">CI/CD</span>
+                                <span class="tag">Monitoring</span>
+                                <span class="tag">GitOps</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="../assets/cv.pdf" class="btn btn-primary">Download Full CV (PDF)</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sarath. Built with care, deployed on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research & Publications - Sarath</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .publication {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .publication:last-child {
+            border-bottom: none;
+        }
+        .pub-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        .pub-authors {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        .pub-venue {
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+        .pub-links a {
+            margin-right: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .pub-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../index.html#home">Home</a></li>
+            <li><a href="../blog/index.html">Blog</a></li>
+            <li><a href="publications.html">Research</a></li>
+            <li><a href="../work/experience.html">Experience</a></li>
+        </ul>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h2>Research & Publications</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                <h3 style="margin-bottom: 2rem;">Research Interests</h3>
+                <p style="margin-bottom: 3rem; line-height: 1.8;">
+                    My research focuses on <strong>ML systems and infrastructure</strong>—specifically 
+                    GPU resource management, workload scheduling for ML clusters, and building efficient 
+                    platforms for AI workloads. I'm interested in systems challenges at the intersection 
+                    of high-performance computing and machine learning.
+                </p>
+
+                <h3 style="margin-bottom: 2rem;">Publications</h3>
+                
+                <!-- Example publication entries - replace with your actual work -->
+                <div class="publication">
+                    <div class="pub-title">
+                        Efficient GPU Scheduling for Multi-Tenant ML Workloads
+                    </div>
+                    <div class="pub-authors">
+                        <strong>Sarath</strong>, Collaborator Name
+                    </div>
+                    <div class="pub-venue">
+                        In Preparation, 2026
+                    </div>
+                    <p>
+                        Exploring scheduling strategies that balance fairness and efficiency for 
+                        heterogeneous ML workloads on shared GPU clusters.
+                    </p>
+                    <div class="pub-links">
+                        <a href="#">[PDF Coming Soon]</a>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 2rem; margin-top: 3rem;">Projects</h3>
+
+                <div class="publication">
+                    <div class="pub-title">
+                        Production ML Platform on Kubernetes
+                    </div>
+                    <div class="pub-authors">
+                        Personal Project, 2025-2026
+                    </div>
+                    <p>
+                        Built a production-ready ML platform using Kubernetes, MLflow, ArgoCD, and Terraform. 
+                        Includes comprehensive ADR documentation and GitOps workflows for ML pipeline management.
+                    </p>
+                    <div class="pub-links">
+                        <a href="https://github.com/yourusername/ml-platform">GitHub</a>
+                        <a href="#">Documentation</a>
+                    </div>
+                </div>
+
+                <div class="publication">
+                    <div class="pub-title">
+                        Workload Characterization for GPU Clusters
+                    </div>
+                    <div class="pub-authors">
+                        Academic Project, UNC Charlotte, 2025
+                    </div>
+                    <p>
+                        Analyzed trace data from production ML workloads to understand GPU utilization 
+                        patterns and inform scheduling decisions.
+                    </p>
+                    <div class="pub-links">
+                        <a href="#">Report</a>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 2rem; margin-top: 3rem;">Talks & Presentations</h3>
+
+                <div class="publication">
+                    <div class="pub-title">
+                        MLOps at Scale: Lessons from Production
+                    </div>
+                    <div class="pub-venue">
+                        Internal Tech Talk, Boston Scientific, 2024
+                    </div>
+                    <p>
+                        Shared experiences building and operating ML infrastructure at enterprise scale.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sarath. Built with care, deployed on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+</html>
