@@ -226,8 +226,7 @@ def main():
             else:
                 date_obj = datetime(raw_date.year, raw_date.month, raw_date.day)
         else:
-            mtime = md_file.stat().st_mtime
-            date_obj = datetime.fromtimestamp(mtime)
+            date_obj = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 
         date_str = format_date(date_obj)
 
