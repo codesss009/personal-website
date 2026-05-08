@@ -214,6 +214,9 @@ def format_date(date_obj) -> str:
 
 
 def main():
+    for old_html in POSTS_DIR.glob("*.html"):
+        old_html.unlink()
+
     md = markdown.Markdown(extensions=["fenced_code", "tables"])
     posts = []
 
