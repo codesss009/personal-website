@@ -3,8 +3,6 @@ name: Build Blog
 on:
   push:
     branches: [main]
-    paths:
-      - "blog/posts/*.md"
 
 permissions:
   contents: write
@@ -14,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:

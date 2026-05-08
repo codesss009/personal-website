@@ -182,7 +182,7 @@ def parse_frontmatter(content: str) -> tuple[dict, str]:
 def format_date(date_obj) -> str:
     if isinstance(date_obj, str):
         date_obj = datetime.strptime(date_obj, "%Y-%m-%d")
-    return date_obj.strftime("%B %-d, %Y")
+    return f"{date_obj.strftime('%B')} {date_obj.day}, {date_obj.year}"
 
 
 def main():
