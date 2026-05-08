@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Bedrock - Sarath</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .post-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .post-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .post-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .post-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            text-align: left;
+        }
+        .post-content h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+        .post-content code {
+            background: var(--bg-light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .post-content pre {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .back-link {
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../../index.html#home">Home</a></li>
+            <li><a href="../index.html">Blog</a></li>
+            <li><a href="../../research/publications.html">Research</a></li>
+            <li><a href="../../work/experience.html">Experience</a></li>
+        </ul>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="post-content">
+                <div class="back-link">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+
+                <div class="post-header">
+                    <div class="post-meta">May 8, 2026</div>
+                    <h1 class="post-title">Amazon Bedrock</h1>
+                </div>
+
+                <p>Amazon Bedrock is a Unified Service providing a platform to access various Gen-AI foundational models provided by various vendors like Meta, Anthropic, Amazon, etc.</p>
+<h2>Inference Profile</h2>
+<p>Inference profile lets you wrap the user and track the usage to monitor costs. Let you access the cross-region models and define custom profile parameters such as TOP K, Temperature etc to tweak the foundational models.</p>
+<p>There are two types of inference profile offered by AWS.</p>
+<ul>
+<li>System-defined inference profile.</li>
+<li>Application inference profile.</li>
+</ul>
+<h3>System-defined inference profile</h3>
+<p>System-defined inference profile is already a pre-existing profile offered by Amazon which lets you cross-region access and have scope of the global user.</p>
+<p>As of May 2025, Advanced Models like Claude Sonnet 3.7 only supports System-defined inference profile and you cant create an application inference profile with this model.</p>
+<h3>Application Inference profile</h3>
+<p>Application inference profiles let you create your own inference environment with custom settings and permissions.</p>
+<p>Write on Medium
+This lets you fine tune model behaviour by setting up parameters, restrict usage through IAM and lets you track costs at the application level.</p>
+<p>We can separate profiles at the application level if we have multiple application and want to track and restrict access separately application inference profile helps us to do so.</p>
+<h3>Architectural Diagram of how inference profile works</h3>
+<p><em>(Press enter or click to view image in full size)</em></p>
+<h2>How to invoke model using inference profile</h2>
+<p>Below is the python code using boto3 SDK to invoke model using an inference profile.</p>
+<p>```python
+response = bedrock_runtime.invoke_model_with_inference_profile(
+    inferenceProfileArn="arn:aws:bedrock:us-east-1:<account-id>:inference-profile/claude-customer-support",
+    body=json.dumps({
+        "prompt": "Human: How do I reset my password?\nAssistant:",
+    }),
+    contentType="application/json"
+)</p>
+
+                <div class="back-link" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sarath. Built with care, deployed on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+</html>

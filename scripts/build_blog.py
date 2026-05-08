@@ -179,6 +179,25 @@ def parse_frontmatter(content: str) -> tuple[dict, str]:
     return fm, body
 
 
+def infer_title(body: str, slug: str) -> tuple[str, str]:
+    """Return (title, body_with_h1_stripped). Strips leading H1 if used as title."""
+    lines = body.splitlines()
+    for i, line in enumerate(lines):
+        if line.startswith("# "):
+            title = line[2:].strip()
+            remaining = "\n".join(lines[i + 1:]).lstrip("\n")
+            return title, remaining
+    return slug.replace("-", " ").title(), body
+
+
+def infer_description(body: str) -> str:
+    for line in body.splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and not line.startswith("```") and not line.startswith("*") and not line.startswith("-") and not line.startswith("|"):
+            return line[:200]
+    return ""
+
+
 def format_date(date_obj) -> str:
     if isinstance(date_obj, str):
         date_obj = datetime.strptime(date_obj, "%Y-%m-%d")
@@ -193,14 +212,22 @@ def main():
         content = md_file.read_text(encoding="utf-8")
         fm, body = parse_frontmatter(content)
 
-        if not fm.get("title") or not fm.get("date"):
-            print(f"  skip {md_file.name}: missing title or date in frontmatter")
-            continue
-
         slug = md_file.stem
-        date_obj = fm["date"]
-        if isinstance(date_obj, str):
-            date_obj = datetime.strptime(date_obj, "%Y-%m-%d")
+        if fm.get("title"):
+            title = fm["title"]
+        else:
+            title, body = infer_title(body, slug)
+        description = fm.get("description") or infer_description(body)
+
+        raw_date = fm.get("date")
+        if raw_date:
+            if isinstance(raw_date, str):
+                date_obj = datetime.strptime(raw_date, "%Y-%m-%d")
+            else:
+                date_obj = datetime(raw_date.year, raw_date.month, raw_date.day)
+        else:
+            mtime = md_file.stat().st_mtime
+            date_obj = datetime.fromtimestamp(mtime)
 
         date_str = format_date(date_obj)
 
@@ -209,7 +236,7 @@ def main():
 
         out_file = POSTS_DIR / f"{slug}.html"
         out_file.write_text(
-            POST_TEMPLATE.format(title=fm["title"], date_str=date_str, body_html=body_html),
+            POST_TEMPLATE.format(title=title, date_str=date_str, body_html=body_html),
             encoding="utf-8",
         )
         print(f"  wrote {out_file}")
@@ -217,10 +244,10 @@ def main():
         posts.append(
             {
                 "slug": slug,
-                "title": fm["title"],
+                "title": title,
                 "date": date_obj,
                 "date_str": date_str,
-                "description": fm.get("description", ""),
+                "description": description,
             }
         )
 
