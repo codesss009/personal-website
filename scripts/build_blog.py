@@ -4,6 +4,7 @@ Build blog: converts blog/posts/*.md → HTML and regenerates blog/index.html.
 Run from repo root: python scripts/build_blog.py
 """
 
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -190,11 +191,19 @@ def infer_title(body: str, slug: str) -> tuple[str, str]:
     return slug.replace("-", " ").title(), body
 
 
+def strip_markdown(text: str) -> str:
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+    text = re.sub(r"\*(.+?)\*", r"\1", text)
+    text = re.sub(r"`(.+?)`", r"\1", text)
+    text = re.sub(r"\[(.+?)\]\(.+?\)", r"\1", text)
+    return text.strip()
+
+
 def infer_description(body: str) -> str:
     for line in body.splitlines():
         line = line.strip()
         if line and not line.startswith("#") and not line.startswith("```") and not line.startswith("*") and not line.startswith("-") and not line.startswith("|"):
-            return line[:200]
+            return strip_markdown(line)[:200]
     return ""
 
 
