@@ -47,22 +47,23 @@
             overflow-x: auto;
             margin: 1.5rem 0;
         }
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
         .back-link {
             margin: 2rem 0;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand"><a href="../../index.html" style="text-decoration: none; color: inherit;">Sarath</a></div>
-            <ul class="nav-links">
-                <li><a href="../../index.html#about">About</a></li>
-                <li><a href="../index.html">Blog</a></li>
-                <li><a href="../../research/publications.html">Research</a></li>
-                <li><a href="../../work/experience.html">Experience</a></li>
-            </ul>
-        </div>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../../index.html#home">Home</a></li>
+            <li><a href="../index.html">Blog</a></li>
+            <li><a href="../../research/publications.html">Research</a></li>
+            <li><a href="../../work/experience.html">Experience</a></li>
+        </ul>
     </nav>
 
     <section class="section">
@@ -77,41 +78,27 @@
                     <h1 class="post-title">Why Architecture Decision Records Matter for ML Platforms</h1>
                 </div>
 
-                <!-- YOUR CONTENT STARTS HERE -->
-                <p>
-                    When building ML platforms, we make hundreds of architectural decisions. 
-                    Which orchestrator? How to handle model versioning? Where to store artifacts? 
-                    Six months later, when someone asks "why did we choose X over Y?", the answer 
-                    is often lost in Slack threads or forgotten entirely.
-                </p>
-
-                <h2>What are ADRs?</h2>
-                <p>
-                    Architecture Decision Records (ADRs) are short documents that capture important 
-                    architectural decisions along with their context and consequences. Each ADR 
-                    describes a single decision in a simple, structured format.
-                </p>
-
-                <h2>Why They Matter for ML Platforms</h2>
-                <p>
-                    ML platforms are particularly complex because they sit at the intersection of 
-                    infrastructure, data engineering, and machine learning. Decisions made early 
-                    often have long-lasting impacts:
-                </p>
-
-                <ul>
-                    <li><strong>Storage choices</strong> affect model versioning and artifact management</li>
-                    <li><strong>Orchestration decisions</strong> determine how workflows scale</li>
-                    <li><strong>Security patterns</strong> impact compliance and access control</li>
-                </ul>
-
-                <h2>Real Example: Choosing MLflow Over Custom Tracking</h2>
-                <p>
-                    In our platform, we documented the decision to use MLflow for experiment tracking 
-                    instead of building a custom solution. The ADR captured:
-                </p>
-
-                <pre><code>## Context
+                <p>When building ML platforms, we make hundreds of architectural decisions.
+Which orchestrator? How to handle model versioning? Where to store artifacts?
+Six months later, when someone asks "why did we choose X over Y?", the answer
+is often lost in Slack threads or forgotten entirely.</p>
+<h2>What are ADRs?</h2>
+<p>Architecture Decision Records (ADRs) are short documents that capture important
+architectural decisions along with their context and consequences. Each ADR
+describes a single decision in a simple, structured format.</p>
+<h2>Why They Matter for ML Platforms</h2>
+<p>ML platforms are particularly complex because they sit at the intersection of
+infrastructure, data engineering, and machine learning. Decisions made early
+often have long-lasting impacts:</p>
+<ul>
+<li><strong>Storage choices</strong> affect model versioning and artifact management</li>
+<li><strong>Orchestration decisions</strong> determine how workflows scale</li>
+<li><strong>Security patterns</strong> impact compliance and access control</li>
+</ul>
+<h2>Real Example: Choosing MLflow Over Custom Tracking</h2>
+<p>In our platform, we documented the decision to use MLflow for experiment tracking
+instead of building a custom solution. The ADR captured:</p>
+<pre><code>## Context
 Our data science team needed centralized experiment tracking.
 Custom solutions would require ongoing maintenance.
 
@@ -127,26 +114,18 @@ Positive:
 Negative:
 - Some customization limitations
 - Additional service to maintain
-- Learning curve for team</code></pre>
-
-                <h2>How to Start</h2>
-                <p>
-                    Keep it simple. Create a <code>docs/adr/</code> directory in your repo and 
-                    start numbering your decisions: <code>0001-use-kubernetes.md</code>, 
-                    <code>0002-choose-mlflow.md</code>, etc.
-                </p>
-
-                <p>
-                    Each ADR should answer: What's the context? What did we decide? What are the 
-                    consequences? That's it.
-                </p>
-
-                <h2>Conclusion</h2>
-                <p>
-                    ADRs aren't just documentation—they're a form of institutional memory. For ML 
-                    platforms where decisions compound over time, they're essential for maintaining 
-                    velocity and avoiding repeated debates.
-                </p>
+- Learning curve for team
+</code></pre>
+<h2>How to Start</h2>
+<p>Keep it simple. Create a <code>docs/adr/</code> directory in your repo and
+start numbering your decisions: <code>0001-use-kubernetes.md</code>,
+<code>0002-choose-mlflow.md</code>, etc.</p>
+<p>Each ADR should answer: What's the context? What did we decide? What are the
+consequences? That's it.</p>
+<h2>Conclusion</h2>
+<p>ADRs aren't just documentation—they're a form of institutional memory. For ML
+platforms where decisions compound over time, they're essential for maintaining
+velocity and avoiding repeated debates.</p>
 
                 <div class="back-link" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
                     <a href="../index.html">← Back to Blog</a>
