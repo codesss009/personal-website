@@ -1,4 +1,4 @@
-# How to Give Access to a Service Role to Other AWS Resources/Services
+# Role Chaining
 
 ## Introduction
 
