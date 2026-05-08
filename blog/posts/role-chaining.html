@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Give Access to a Service Role to Other AWS Resources/Services - Sarath</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .post-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .post-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .post-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .post-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            text-align: left;
+        }
+        .post-content h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+        .post-content code {
+            background: var(--bg-light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .post-content pre {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .back-link {
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../../index.html#home">Home</a></li>
+            <li><a href="../index.html">Blog</a></li>
+            <li><a href="../../research/publications.html">Research</a></li>
+            <li><a href="../../work/experience.html">Experience</a></li>
+        </ul>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="post-content">
+                <div class="back-link">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+
+                <div class="post-header">
+                    <div class="post-meta">May 8, 2026</div>
+                    <h1 class="post-title">How to Give Access to a Service Role to Other AWS Resources/Services</h1>
+                </div>
+
+                <h2>Introduction</h2>
+<p>The basic premise of <strong>Role Chaining</strong> is to let an IAM role assume another IAM role, without directly assuming the role.</p>
+<hr />
+<h2>Why Use Role Chaining?</h2>
+<p>Security is the main concern, but let's dive deeper into what constitutes this:</p>
+<ol>
+<li><strong>Principle of Least Privilege</strong> — Keep the service role to minimal access, as the developer role has elevated privileges.</li>
+<li><strong>Time-boxed Access</strong> — The service role assuming a chained role with a short session duration limits resource exhaustion (unintended long-running jobs) and scopes automation jobs to a limited window.</li>
+<li><strong>Maintain a Single Central Role with Elevated Privileges</strong> — Avoiding cloning permissions to other roles and maintaining a single role with elevated privileges eases auditing, logging activity, and prevents permission sprawl.</li>
+</ol>
+<hr />
+<h2>Architecture</h2>
+<pre><code>EC2 Service Role  ──(sts:AssumeRole)──▶  Developer Role  ──▶  AWS Resources
+  (Initial Role)                          (Target Role)
+</code></pre>
+<blockquote>
+<p>Role Chaining: EC2 Service Role to Developer Role.</p>
+</blockquote>
+<hr />
+<h2>Implementing Role Chaining</h2>
+<h3>Step 1 — Update Trust Relationship of the Target Role</h3>
+<p>Assuming the developer role and a service role are already in place, first change the trust relationship of the <strong>developer role</strong> (target role).</p>
+<p>Add the ARN of your service role (initial role) to the principal in the target role's trust policy:</p>
+<pre><code class="language-json">{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Principal&quot;: {
+        &quot;AWS&quot;: &quot;arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/ROLE-NAME&quot;
+      },
+      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
+      &quot;Condition&quot;: {
+        &quot;StringLike&quot;: {
+          &quot;aws:userid&quot;: [
+            &quot;*:yyyy@yyy.com&quot;,
+            &quot;*:xxxx@xxx.com&quot;
+          ]
+        }
+      }
+    },
+    {
+      &quot;Sid&quot;: &quot;Statement1&quot;,
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Principal&quot;: {
+        &quot;AWS&quot;: &quot;arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;service-role-name&gt;&quot;
+      },
+      &quot;Action&quot;: &quot;sts:AssumeRole&quot;
+    }
+  ]
+}
+</code></pre>
+<blockquote>
+<p><strong>Quick Tip:</strong> Add a new statement block to the trust policy rather than modifying existing ones. This avoids inheriting conditions that could inadvertently block role chaining.</p>
+</blockquote>
+<hr />
+<h3>Step 2 — Update Permission Policy of the Initial Role</h3>
+<p>Update the permission policy of the <strong>service role</strong> (initial role) to allow it to assume the developer role (target role):</p>
+<pre><code class="language-json">{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
+      &quot;Resource&quot;: &quot;arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;developer-role-name&gt;&quot;
+    }
+  ]
+}
+</code></pre>
+<hr />
+<h3>Step 3 — Assume the Target Role with the Boto3 SDK</h3>
+<p>Use the boto3 SDK in Python to assume the target role wherever elevated access is required:</p>
+<pre><code class="language-python">import boto3
+
+# Step 1: Assume DeveloperRole
+sts = boto3.client('sts')
+response = sts.assume_role(
+    RoleArn='arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/DeveloperRole',
+    RoleSessionName='DevRoleSession'
+)
+
+# Step 2: Use the credentials to access S3
+creds = response['Credentials']
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=creds['AccessKeyId'],
+    aws_secret_access_key=creds['SecretAccessKey'],
+    aws_session_token=creds['SessionToken']
+)
+
+# Step 3: Validate the role that is being assumed
+assumed = boto3.Session(
+    aws_access_key_id=creds['AccessKeyId'],
+    aws_secret_access_key=creds['SecretAccessKey'],
+    aws_session_token=creds['SessionToken']
+)
+print(assumed.client('sts').get_caller_identity())
+
+# Step 4: Validate access to services and resources via Role Chaining
+print(s3.list_buckets())
+</code></pre>
+<hr />
+<h2>References</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html">AWS STS AssumeRole Documentation</a></li>
+<li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html">IAM Roles Best Practices — AWS Whitepaper</a></li>
+<li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_aws-accounts.html">Delegating Access Across AWS Accounts</a></li>
+</ul>
+<hr />
+<p><em>Tags: AWS, IAM Roles, Role Chaining, Security, Least Privilege</em></p>
+
+                <div class="back-link" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sarath. Built with care, deployed on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+</html>
