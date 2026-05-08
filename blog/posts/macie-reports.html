@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivering AWS Macie Findings — Secure and Scalable Way - Sarath</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .post-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .post-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .post-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .post-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            text-align: left;
+        }
+        .post-content h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+        .post-content code {
+            background: var(--bg-light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .post-content pre {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .back-link {
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="pill-nav">
+        <ul>
+            <li><a href="../../index.html#home">Home</a></li>
+            <li><a href="../index.html">Blog</a></li>
+            <li><a href="../../research/publications.html">Research</a></li>
+            <li><a href="../../work/experience.html">Experience</a></li>
+        </ul>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="post-content">
+                <div class="back-link">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+
+                <div class="post-header">
+                    <div class="post-meta">May 8, 2026</div>
+                    <h1 class="post-title">Delivering AWS Macie Findings — Secure and Scalable Way</h1>
+                </div>
+
+                <h2>Introduction</h2>
+<p>Amazon Macie is a powerful security service that uses machine learning to automatically discover, classify, and protect sensitive data stored in Amazon S3. For security teams, it offers a centralized way to manage data security posture, detect risks, and ensure compliance across large S3 estates.</p>
+<p>But what happens when multiple teams manage their own buckets? How do you allow those teams to view <strong>only their own</strong> Macie findings — without exposing sensitive data from other parts of the organization?</p>
+<p>This post walks through a practical, secure, and scalable approach for granting team-specific read-only access to Macie findings by directly mapping findings to S3 buckets using a centralized Macie setup.</p>
+<hr />
+<h2>The Challenge</h2>
+<p>AWS Macie is enabled at the account level, and its findings reference S3 buckets and objects where sensitive data is discovered.</p>
+<p>However:</p>
+<ul>
+<li>Macie findings are <strong>not taggable</strong></li>
+<li>IAM does <strong>not</strong> support <code>macie2:resourceBucketName</code> as a condition key</li>
+<li>There is <strong>no direct way</strong> to restrict access to findings based on S3 bucket ownership in IAM</li>
+</ul>
+<p>This makes team-level access control seem tricky at first glance.</p>
+<p>From an IAM policy perspective, there are effectively only two options out of the box — <strong>full access</strong> to Macie findings or <strong>no access</strong>. What we actually want is to map access to Macie findings of an S3 bucket to the team that owns that bucket.</p>
+<hr />
+<h2>Design Overview</h2>
+<h3>The Simplest Working Architecture</h3>
+<ol>
+<li>Central platform / security team creates and runs Macie jobs</li>
+<li>Macie writes findings to each team's dedicated S3 bucket</li>
+<li>Teams read their own results directly from S3</li>
+</ol>
+<pre><code>Admin Account (Macie Enabled)
+        │
+        ├── team-dev-macie-scan  ──▶  s3://team-dev-macie-reports
+        ├── team-qa-macie-scan   ──▶  s3://team-qa-macie-reports
+        └── team-x-macie-scan   ──▶  s3://team-x-macie-reports
+</code></pre>
+<hr />
+<h2>Step-by-Step Guide</h2>
+<h3>Step 1 — Organize Buckets by Team</h3>
+<p>Identify which buckets belong to each team. Optionally, tag each bucket with an owner identifier:</p>
+<pre><code class="language-bash">aws s3api put-bucket-tagging --bucket team-dev-data-bucket \
+  --tagging 'TagSet=[{Key=owner,Value=team-dev}]'
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> Tagging is optional for Macie itself, but is good practice for cost monitoring, long-term governance, and enabling ABAC (Attribute-Based Access Control) in the future.</p>
+</blockquote>
+<hr />
+<h3>Step 2 — Create Macie Discovery Jobs per Team</h3>
+<p>In the admin account where Macie is enabled:</p>
+<ul>
+<li>Create <strong>one Macie job per team</strong></li>
+<li>Target only that team's S3 buckets</li>
+<li>Schedule the job as needed (one-time, daily, etc.)</li>
+</ul>
+<p>For example:</p>
+<table>
+<thead>
+<tr>
+<th>Job Name</th>
+<th>Scans</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>team-dev-macie-scan</code></td>
+<td><code>team-dev-data-bucket</code></td>
+</tr>
+<tr>
+<td><code>team-qa-macie-scan</code></td>
+<td><code>team-qa-data-bucket</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>This is the key move:</strong> findings will only exist for the team's data, so no complex IAM filtering is required.</p>
+</blockquote>
+<hr />
+<h3>Step 3 — Grant Macie Permission to Write to Team Buckets</h3>
+<p>Add the following bucket policy to each team's S3 results bucket:</p>
+<pre><code class="language-json">{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Sid&quot;: &quot;AllowMacieToWriteFindings&quot;,
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Principal&quot;: {
+        &quot;Service&quot;: &quot;macie.amazonaws.com&quot;
+      },
+      &quot;Action&quot;: &quot;s3:PutObject&quot;,
+      &quot;Resource&quot;: &quot;arn:aws:s3:::team-dev-macie-reports/*&quot;,
+      &quot;Condition&quot;: {
+        &quot;StringEquals&quot;: {
+          &quot;aws:SourceAccount&quot;: &quot;123456789012&quot;
+        },
+        &quot;ArnLike&quot;: {
+          &quot;aws:SourceArn&quot;: &quot;arn:aws:macie2:*:123456789012:*&quot;
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<blockquote>
+<p>Replace <code>123456789012</code> with your AWS Account ID and update the bucket name accordingly.</p>
+</blockquote>
+<hr />
+<h3>Step 4 — Configure Macie Jobs to Export to Team Buckets</h3>
+<p>From the Macie console in the admin account:</p>
+<ol>
+<li>Create a classification job for each team</li>
+<li>Under <strong>"Additional settings"</strong>, check <strong>"Export classification results"</strong></li>
+<li>Enter the appropriate S3 bucket as the destination:</li>
+</ol>
+<pre><code>s3://team-dev-macie-reports
+</code></pre>
+<p>Macie will now automatically export classification findings into that bucket.</p>
+<hr />
+<h3>Step 5 — Points for Teams to Note</h3>
+<ul>
+<li>Teams can only see findings tied to <strong>their own buckets</strong></li>
+<li>If no findings appear, it is likely because their buckets were not included in the Macie job</li>
+</ul>
+<hr />
+<h2>Why This Design Works</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Simple</strong></td>
+<td>No unsupported tag conditions, no Macie console access required</td>
+</tr>
+<tr>
+<td><strong>Secure</strong></td>
+<td>Follows Least Privilege; bucket-level access control enforced</td>
+</tr>
+<tr>
+<td><strong>Admin Control</strong></td>
+<td>Centralized job management, cost visibility, and compliance</td>
+</tr>
+<tr>
+<td><strong>Scalable</strong></td>
+<td>New team? Create another job and map to their S3 bucket — no refactoring needed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Tags: AWS, Amazon Macie, S3, Security, IAM, Data Classification, Least Privilege</em></p>
+
+                <div class="back-link" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <a href="../index.html">← Back to Blog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sarath. Built with care, deployed on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+</html>
