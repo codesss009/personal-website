@@ -1,4 +1,4 @@
-# Amazon Bedrock
+# Amazon Bedrock Inference Profiles
 
 Amazon Bedrock is a Unified Service providing a platform to access various Gen-AI foundational models provided by various vendors like Meta, Anthropic, Amazon, etc.
 
